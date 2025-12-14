@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: florist-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - FLORIST_API_KEY=${FLORIST_API_KEY}
+      - FLORIST_API_PASSWORD=${FLORIST_API_PASSWORD}
+      - PORT=8080
+    env_file:
+      - .env
+
+
+
+

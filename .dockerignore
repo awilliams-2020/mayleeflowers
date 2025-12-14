@@ -1,0 +1,11 @@
+README.md
+.git
+.gitignore
+*.md
+node_modules
+.env
+.env.local
+
+
+
+

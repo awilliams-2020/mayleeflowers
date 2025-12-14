@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maylee Flowers - Beautiful Flowers</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Authorize.Net Accept.js -->
+    <script type="text/javascript" src="https://jstest.authorize.net/v1/Accept.js" charset="utf-8"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🌸 Maylee Flowers</h1>
+            <nav>
+                <button id="cartBtn" class="cart-button">
+                    🛒 Cart (<span id="cartCount">0</span>)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="loading" class="loading">
+            <p>Loading beautiful flowers...</p>
+        </section>
+
+        <section id="error" class="error hidden">
+            <p>Error loading products. Please check your API credentials.</p>
+        </section>
+
+        <section id="products" class="products hidden">
+            <h2>Our Collection</h2>
+            
+            <!-- Category Filters -->
+            <div id="categoryFilters" class="category-filters">
+                <div class="filter-section">
+                    <button class="filter-section-header" type="button">
+                        <h3 class="filter-section-title">All Products</h3>
+                        <span class="filter-toggle-icon">+</span>
+                    </button>
+                    <div class="filter-section-content">
+                        <button class="category-btn active" data-category="all">All Products</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <button class="filter-section-header" type="button">
+                        <h3 class="filter-section-title">Occasions</h3>
+                        <span class="filter-toggle-icon">+</span>
+                    </button>
+                    <div class="filter-section-content collapsed">
+                        <button class="category-btn" data-category="bs">Best Sellers</button>
+                        <button class="category-btn" data-category="ao">Everyday</button>
+                        <button class="category-btn" data-category="bd">Birthday</button>
+                        <button class="category-btn" data-category="an">Anniversary</button>
+                        <button class="category-btn" data-category="lr">Love & Romance</button>
+                        <button class="category-btn" data-category="gw">Get Well</button>
+                        <button class="category-btn" data-category="nb">New Baby</button>
+                        <button class="category-btn" data-category="ty">Thank You</button>
+                        <button class="category-btn" data-category="sy">Funeral & Sympathy</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <button class="filter-section-header" type="button">
+                        <h3 class="filter-section-title">Product Types</h3>
+                        <span class="filter-toggle-icon">+</span>
+                    </button>
+                    <div class="filter-section-content collapsed">
+                        <button class="category-btn" data-category="c">Centerpieces</button>
+                        <button class="category-btn" data-category="o">One Sided</button>
+                        <button class="category-btn" data-category="v">Vased Arrangements</button>
+                        <button class="category-btn" data-category="r">Roses</button>
+                        <button class="category-btn" data-category="x">Fruit Baskets</button>
+                        <button class="category-btn" data-category="p">Plants</button>
+                        <button class="category-btn" data-category="b">Balloons</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <button class="filter-section-header" type="button">
+                        <h3 class="filter-section-title">Price Range</h3>
+                        <span class="filter-toggle-icon">+</span>
+                    </button>
+                    <div class="filter-section-content collapsed">
+                        <button class="category-btn" data-category="u60">Under $60</button>
+                        <button class="category-btn" data-category="60t80">$60 - $80</button>
+                        <button class="category-btn" data-category="80t100">$80 - $100</button>
+                        <button class="category-btn" data-category="a100">Above $100</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <button class="filter-section-header" type="button">
+                        <h3 class="filter-section-title">Seasonal</h3>
+                        <span class="filter-toggle-icon">+</span>
+                    </button>
+                    <div class="filter-section-content collapsed">
+                        <button class="category-btn" data-category="cm">Christmas</button>
+                        <button class="category-btn" data-category="ea">Easter</button>
+                        <button class="category-btn" data-category="vd">Valentine's Day</button>
+                        <button class="category-btn" data-category="md">Mother's Day</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="productsGrid" class="products-grid"></div>
+            <div id="noProducts" class="no-products hidden">
+                <p>No products found in this category.</p>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div id="pagination" class="pagination hidden">
+                <div class="pagination-info">
+                    <span id="paginationText">Showing 1-12 of 0 products</span>
+                </div>
+                <div class="pagination-controls">
+                    <button id="prevPage" class="pagination-btn" disabled>Previous</button>
+                    <div id="pageNumbers" class="page-numbers"></div>
+                    <button id="nextPage" class="pagination-btn">Next</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="cart" class="cart hidden">
+            <div class="cart-header">
+                <h2>Shopping Cart</h2>
+                <button id="closeCart" class="close-btn">✕</button>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total: $<span id="cartTotal">0.00</span></strong>
+                </div>
+                <button id="checkoutBtn" class="checkout-btn">Checkout</button>
+            </div>
+        </section>
+
+        <section id="productDetail" class="product-detail hidden">
+            <div class="product-detail-header">
+                <h2 id="detailProductName">Product Details</h2>
+                <button id="closeProductDetail" class="close-btn">✕</button>
+            </div>
+            <div id="productDetailContent" class="product-detail-content">
+                <div class="product-detail-loading">Loading product details...</div>
+            </div>
+        </section>
+
+        <section id="checkout" class="checkout hidden">
+            <div class="checkout-header">
+                <h2>Checkout</h2>
+                <button id="closeCheckout" class="close-btn">✕</button>
+            </div>
+            
+            <!-- Stepper Progress Bar -->
+            <div class="stepper-container">
+                <div class="stepper-progress">
+                    <div class="stepper-progress-bar" id="stepperProgressBar"></div>
+                </div>
+                <div class="stepper-steps">
+                    <div class="stepper-step active" data-step="1">
+                        <div class="stepper-step-number">1</div>
+                        <div class="stepper-step-label">Cart Review</div>
+                    </div>
+                    <div class="stepper-step" data-step="2">
+                        <div class="stepper-step-number">2</div>
+                        <div class="stepper-step-label">Customer Info</div>
+                    </div>
+                    <div class="stepper-step" data-step="3">
+                        <div class="stepper-step-number">3</div>
+                        <div class="stepper-step-label">Delivery</div>
+                    </div>
+                    <div class="stepper-step" data-step="4">
+                        <div class="stepper-step-number">4</div>
+                        <div class="stepper-step-label">Payment</div>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="checkoutForm">
+                <!-- Step 1: Cart Review -->
+                <div class="checkout-step active" data-step="1">
+                    <h3>Review Your Order</h3>
+                    <div id="checkoutCartReview" class="checkout-cart-review">
+                        <!-- Cart items will be populated here -->
+                    </div>
+                    <div class="form-notice">
+                        <strong>Note:</strong> Please review your items before proceeding.
+                    </div>
+                </div>
+                
+                <!-- Step 2: Customer Information -->
+                <div class="checkout-step" data-step="2">
+                    <h3>Customer Information</h3>
+                    <div class="form-group">
+                        <label for="customerName">Your Name</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Your Email</label>
+                        <input type="email" id="customerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Your Phone</label>
+                        <input type="tel" id="customerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Your Address</label>
+                        <input type="text" id="customerAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerCity">Your City</label>
+                        <input type="text" id="customerCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerState">Your State</label>
+                        <input type="text" id="customerState" maxlength="2" placeholder="CA" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerZip">Your ZIP Code</label>
+                        <input type="text" id="customerZip" required>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Delivery Information -->
+                <div class="checkout-step" data-step="3">
+                    <h3>Delivery Information</h3>
+                    <div class="form-group">
+                        <label for="recipientName">Recipient Name</label>
+                        <input type="text" id="recipientName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipientPhone">Recipient Phone</label>
+                        <input type="tel" id="recipientPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryAddress">Delivery Address</label>
+                        <input type="text" id="deliveryAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryCity">City</label>
+                        <input type="text" id="deliveryCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryState">State</label>
+                        <input type="text" id="deliveryState" maxlength="2" placeholder="CA" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryZip">ZIP Code</label>
+                        <input type="text" id="deliveryZip" required>
+                        <small id="deliveryDateStatus" style="display: none; color: green; margin-top: 5px;"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="deliveryDate">Delivery Date</label>
+                        <input type="date" id="deliveryDate" required>
+                        <small id="dateAvailability" style="display: none; margin-top: 5px;"></small>
+                        <div id="availableDatesContainer" class="available-dates-container" style="display: none;">
+                            <div class="available-dates-header">
+                                <strong>Available Delivery Dates:</strong>
+                                <button type="button" id="toggleDatesList" class="toggle-dates-btn">Show Dates</button>
+                            </div>
+                            <div id="availableDatesList" class="available-dates-list"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardMessage">Card Message</label>
+                        <textarea id="cardMessage" rows="3" maxlength="200" placeholder="Your message (200 characters max)" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="specialInstructions">Special Instructions (Optional)</label>
+                        <textarea id="specialInstructions" rows="2" maxlength="100" placeholder="Any special delivery instructions"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Payment & Review -->
+                <div class="checkout-step" data-step="4">
+                    <h3>Payment Information</h3>
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="4111111111111111" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardExpiry">Expiry (MM/YY)</label>
+                        <input type="text" id="cardExpiry" placeholder="12/25" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCVV">CVV</label>
+                        <input type="text" id="cardCVV" placeholder="123" required>
+                    </div>
+                    
+                    <div id="orderTotal" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px; display: none;">
+                        <!-- Order total will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="form-notice">
+                        <strong>Note:</strong> Please ensure all information is correct. Delivery dates are subject to availability.
+                    </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="checkout-navigation">
+                    <button type="button" id="prevStepBtn" class="checkout-nav-btn checkout-nav-btn-secondary" style="display: none;">Previous</button>
+                    <button type="button" id="nextStepBtn" class="checkout-nav-btn checkout-nav-btn-primary">Next</button>
+                    <button type="submit" id="submitOrderBtn" class="checkout-nav-btn checkout-nav-btn-primary" style="display: none;">Place Order</button>
+                </div>
+            </form>
+            
+            <!-- Order Confirmation (shown after order placement) -->
+            <div id="orderConfirmation" class="order-confirmation hidden">
+                <div class="confirmation-content">
+                    <div class="confirmation-icon">✓</div>
+                    <h2>Order Placed Successfully!</h2>
+                    <p id="confirmationMessage">Your order has been placed. You will receive a confirmation email shortly.</p>
+                    <div id="orderDetails" class="order-details"></div>
+                    <button id="closeConfirmation" class="checkout-nav-btn checkout-nav-btn-primary">Close</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="overlay" class="overlay hidden"></div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
